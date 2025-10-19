@@ -1,54 +1,64 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>Estatísticas</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="estatistica.css">
+  <meta charset="UTF-8">
+  <title>Estatísticas do Formulário</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="estatistica.css">
 </head>
 <body>
-<h1>Estatísticas do Formulário</h1>
-<canvas id="camposChart" width="400" height="200"></canvas>
-<canvas id="perguntasChart" width="400" height="200"></canvas>
+  <h1>📊 Estatísticas do Formulário</h1>
 
-<script>
-async function atualizar() {
-    const res = await fetch('/estatisticas');
-    const dados = await res.json();
+  <canvas id="camposChart" width="400" height="200"></canvas>
+  <canvas id="perguntasChart" width="400" height="200"></canvas>
 
-    const ctx1 = document.getElementById('camposChart').getContext('2d');
-    new Chart(ctx1, {
+  <footer>
+    Atualiza automaticamente a cada 5 segundos
+  </footer>
+
+  <script>
+    async function atualizar() {
+      const res = await fetch('/estatisticas/dados');
+      const dados = await res.json();
+
+      if (window.camposChart) window.camposChart.destroy();
+      if (window.perguntasChart) window.perguntasChart.destroy();
+
+      const ctx1 = document.getElementById('camposChart').getContext('2d');
+      window.camposChart = new Chart(ctx1, {
         type: 'bar',
         data: {
-            labels: Object.keys(dados.campos),
-            datasets: [{
-                label: 'Preenchimentos',
-                data: Object.values(dados.campos),
-                backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        }
-    });
+          labels: Object.keys(dados.campos),
+          datasets: [{
+            label: 'Campos preenchidos',
+            data: Object.values(dados.campos),
+            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+      });
 
-    const ctx2 = document.getElementById('perguntasChart').getContext('2d');
-    new Chart(ctx2, {
+      const ctx2 = document.getElementById('perguntasChart').getContext('2d');
+      window.perguntasChart = new Chart(ctx2, {
         type: 'bar',
         data: {
-            labels: [].concat(...Object.values(dados.perguntas).map(x => Object.keys(x))),
-            datasets: [{
-                label: 'Respostas',
-                data: [].concat(...Object.values(dados.perguntas).map(x => Object.values(x))),
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
-        }
-    });
-}
+          labels: [].concat(...Object.keys(dados.perguntas).map(p => Object.keys(dados.perguntas[p]))),
+          datasets: [{
+            label: 'Respostas marcadas',
+            data: [].concat(...Object.keys(dados.perguntas).map(p => Object.values(dados.perguntas[p]))),
+            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+      });
+    }
 
-atualizar();
-setInterval(atualizar, 5000);
-</script>
+    atualizar();
+    setInterval(atualizar, 5000);
+  </script>
 </body>
 </html>
