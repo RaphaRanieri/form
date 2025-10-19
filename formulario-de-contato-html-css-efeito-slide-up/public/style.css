@@ -1,0 +1,354 @@
+/* ===========================
+   ESTRUTURA BÁSICA E HEADER
+   =========================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* Garante que padding e border não aumentem o tamanho total dos elementos */
+}
+
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+.content {
+  width: 92%;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+/* ===========================
+   FORMULÁRIO PRINCIPAL
+   =========================== */
+.box-formulario {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: #e9edf1;
+  padding: 30px 15px;
+  box-sizing: border-box;
+}
+
+.formulario {
+  width: 100%;
+  max-width: 420px;
+  background: #2f2a2a;
+  border-radius: 10px;
+  padding: 25px 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.title-form h1 {
+  font-size: 1.6em;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.title-form h1::before {
+  content: "";
+  display: block;
+  width: 60%;
+  height: 3px;
+  margin: 0 auto 6px auto;
+  background: #ff0083;
+  border-radius: 2px;
+}
+
+/* ===========================
+   CAMPOS DE TEXTO E TEXTAREA (CORRIGIDOS)
+   =========================== */
+.formulario span {
+  position: relative;
+  display: block;
+  margin: 15px 0;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  /* Mantém o padding esquerdo para dar espaço ao label flutuante */
+  padding: 12px 12px 12px 44px;
+  font-family: "Open Sans", sans-serif;
+  font-size: 0.95rem;
+  /* Corrigido para preto/escuro, pois o fundo do input é branco */
+  color: #312d2d; 
+  background: #ffffff;
+  border: none;
+  border-radius: 6px;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.3s ease-in-out;
+}
+
+.input:focus,
+.textarea:focus {
+  border: 2px solid #ff0083;
+}
+
+.textarea {
+  min-height: 100px;
+  padding-top: 20px;
+}
+
+/* Garante que o placeholder não interfira, já que estamos usando <label> */
+.input::placeholder,
+.textarea::placeholder {
+    color: transparent;
+}
+
+
+/* ====== LABELS FLUTUANTES (Configuração do seu design) ====== */
+
+/* Estilo BASE do label (posição inicial dentro do campo) */
+.formulario > span > label {
+  position: absolute;
+  top: 50%; /* Centraliza verticalmente com o input */
+  left: 14px;
+  transform: translateY(-50%);
+  color: #999; /* Cor do rótulo quando dentro do campo */
+  font-size: 0.95rem; 
+  line-height: 1;
+  pointer-events: none; /* Permite clicar no input através do label */
+  background: transparent;
+  width: auto;
+  height: auto;
+  transition: all 0.3s ease-in-out;
+  z-index: 1; 
+}
+
+/* Posição inicial do label do textarea */
+.textarea + label {
+  top: 22px; /* Ajuste para o textarea */
+  transform: none;
+}
+
+/* Estilo do label quando o campo TEM FOCO ou está PREENCHIDO (label flutuando acima) */
+.input:focus + label,
+.input:valid + label,
+.textarea:focus + label,
+.textarea:valid + label {
+  top: -10px; /* Move para cima do campo */
+  left: 10px;
+  font-size: 0.75rem; /* Diminui a fonte quando flutuando */
+  color: #ff0083; /* Cor destacada */
+  background: #2f2a2a; /* Cor de fundo do formulário */
+  padding: 0 5px;
+  transform: translateY(0);
+}
+
+/* Removido o seletor .formulario i, pois você está usando labels, não ícones */
+
+
+/* ===========================
+   RADIO GROUP (PERGUNTAS)
+   =========================== */
+.radio-group {
+  background: #3a3434;
+  padding: 14px 12px;
+  border-radius: 8px;
+  margin-bottom: 18px;
+  font-size: 0.95em;
+  box-sizing: border-box;
+}
+
+.radio-group p {
+  color: #fff;
+  font-weight: 600;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #ddd;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.radio-group label:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.radio-group input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: #ff0083;
+  flex-shrink: 0;
+}
+
+/* ===========================
+   BOTÃO DE ENVIO
+   =========================== */
+.box-pulse {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.botao-pulse {
+  width: 100%;
+  background: #ff0083;
+  border: none;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  animation: pulse 1.5s infinite ease-in-out;
+  transition: background 0.3s;
+}
+
+.botao-pulse:hover {
+  background: #e60073;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* ===========================
+   POLÍTICA DE PRIVACIDADE
+   =========================== */
+.politica {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 0.9em;
+  color: #ccc;
+}
+
+.politica a {
+  color: #ff0083;
+  text-decoration: none;
+}
+
+.politica a:hover {
+  text-decoration: underline;
+}
+
+/* ===========================
+   FOOTER (Ajustes de estrutura)
+   =========================== */
+/* Removi as regras do footer pois não estavam completas no original.
+   Se precisar, adicione-as novamente. */
+
+
+/* ===========================
+   RESPONSIVIDADE
+   =========================== */
+@media (max-width: 768px) {
+  .formulario {
+    max-width: 100%;
+    padding: 20px 15px;
+  }
+
+  .title-form h1 {
+    font-size: 1.4em;
+  }
+
+  .input,
+  .textarea {
+    font-size: 0.9rem;
+    padding-left: 40px;
+  }
+  
+  /* Ajuste de responsividade para o label flutuante */
+  .formulario > span > label {
+    left: 10px;
+    font-size: 0.9rem;
+  }
+  
+  .input:focus + label,
+  .input:valid + label,
+  .textarea:focus + label,
+  .textarea:valid + label {
+    font-size: 0.7rem; /* Diminui o texto do label quando flutuando */
+  }
+
+
+  .radio-group {
+    font-size: 0.9rem;
+  }
+
+  .radio-group label {
+    font-size: 0.9rem;
+  }
+
+  .botao-pulse {
+    padding: 12px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .formulario {
+    padding: 18px 12px;
+  }
+
+  .title-form h1 {
+    font-size: 1.3em;
+    letter-spacing: 1px;
+  }
+}
+
+/* ==== Melhoria da responsividade para celulares ==== */
+@media (max-width: 480px) {
+  body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  .box-formulario {
+    padding: 20px 10px;
+  }
+
+  .formulario {
+    width: 100%;
+    padding: 15px 10px;
+    border-radius: 8px;
+  }
+
+  .input,
+  .textarea {
+    font-size: 0.9rem;
+    padding: 10px 10px 10px 38px;
+  }
+
+  .radio-group {
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+
+  .radio-group label {
+    gap: 8px;
+    padding: 6px;
+  }
+
+  .botao-pulse {
+    width: 100%;
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+
+  .title-form h1 {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+  }
+}

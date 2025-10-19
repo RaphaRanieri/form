@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Formulário Segurança Digital</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="main_content container">
+    <div class="box-formulario">
+        <div class="formulario">
+            <div class="title-form"><h1>Segurança Digital</h1></div>
+
+            <form id="formulario">
+                
+                <span>
+                    <input type="text" id="nome" name="nome" class="input" required>
+                    <label for="nome">Nome</label>
+                </span>
+                
+                <span>
+                    <input type="text" id="email" name="email" class="input" required>
+                    <label for="email">E-mail</label>
+                </span>
+                
+                <span>
+                    <input type="text" id="telefone" name="telefone" class="input" required>
+                    <label for="telefone">Telefone</label>
+                </span>
+                
+                <span>
+                    <textarea id="endereco" name="endereco" rows="3" class="textarea" required></textarea>
+                    <label for="endereco">Endereço</label>
+                </span>
+                
+                <span>
+                    <input type="text" id="data_nascimento" name="data_nascimento" class="input"
+                        onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'" required>
+                    <label for="data_nascimento">Data de Nascimento</label>
+                </span>
+
+                <div class="radio-group">
+                    <p>Pergunta 1: Você se preocupa com sua segurança online?</p>
+                    <label><input type="radio" name="motivo1" value="Sempre" required> Sempre</label>
+                    <label><input type="radio" name="motivo1" value="As vezes"> As vezes</label>
+                    <label><input type="radio" name="motivo1" value="Sou desatento"> Sou desatento</label>
+                </div>
+
+                <div class="radio-group">
+                    <p>Pergunta 2: Já teve problemas com segurança digital?</p>
+                    <label><input type="radio" name="motivo2" value="Não" required> Não</label>
+                    <label><input type="radio" name="motivo2" value="Sim"> Sim</label>
+                    <label><input type="radio" name="motivo2" value="Não tenho certeza"> Não tenho certeza</label>
+                </div>
+
+                <div class="radio-group">
+                    <p>Pergunta 3: Se sim, acha que aconteceria novamente?</p>
+                    <label><input type="radio" name="motivo3" value="Sim" required> Sim</label>
+                    <label><input type="radio" name="motivo3" value="Não"> Não</label>
+                    <label><input type="radio" name="motivo3" value="Nunca aconteceu"> Nunca aconteceu</label>
+                </div>
+
+                <div class="politica">
+                    Ao enviar este formulário, você concorda com nossos 
+                    <a href="termos.html" target="_blank">Termos de Privacidade</a>.
+                </div>
+
+                <div class="box-pulse">
+                    <button type="submit" class="botao-pulse">Enviar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script>
+    document.getElementById('formulario').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const dados = {};
+        const formData = new FormData(this);
+        for (const [key, value] of formData.entries()) {
+            dados[key] = value;
+        }
+        
+        // Captura valores dos campos de texto (garantindo que os nomes correspondem aos campos do server.js)
+        dados.nome = document.getElementById('nome').value;
+        dados.email = document.getElementById('email').value;
+        dados.telefone = document.getElementById('telefone').value;
+        dados.endereco = document.getElementById('endereco').value;
+        dados.data_nascimento = document.getElementById('data_nascimento').value;
+
+        // Validação básica para campos obrigatórios
+        const camposObrigatorios = ['nome', 'email', 'telefone', 'endereco', 'data_nascimento', 'motivo1', 'motivo2', 'motivo3'];
+        let formularioValido = true;
+        
+        camposObrigatorios.forEach(campo => {
+            if (!dados[campo] || (typeof dados[campo] === 'string' && dados[campo].trim() === '')) {
+                formularioValido = false;
+            }
+        });
+
+        if (!formularioValido) {
+            alert('Por favor, preencha todos os campos obrigatórios.');
+            return;
+        }
+
+        try {
+            const resposta = await fetch('/contar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dados)
+            });
+
+            if (resposta.ok) {
+                alert('Formulário enviado com sucesso!');
+                this.reset(); // Limpa o formulário após o envio
+            } else {
+                alert('Erro ao enviar o formulário.');
+            }
+        } catch (error) {
+            console.error('Erro de rede:', error);
+            alert('Erro de conexão com o servidor.');
+        }
+    });
+</script>
+</body>
+</html>

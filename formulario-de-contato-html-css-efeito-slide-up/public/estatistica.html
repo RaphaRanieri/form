@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Estatísticas</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<h1>Estatísticas do Formulário</h1>
+<canvas id="camposChart" width="400" height="200"></canvas>
+<canvas id="perguntasChart" width="400" height="200"></canvas>
+
+<script>
+async function atualizar() {
+    const res = await fetch('/estatisticas');
+    const dados = await res.json();
+
+    const ctx1 = document.getElementById('camposChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(dados.campos),
+            datasets: [{
+                label: 'Preenchimentos',
+                data: Object.values(dados.campos),
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        }
+    });
+
+    const ctx2 = document.getElementById('perguntasChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: [].concat(...Object.values(dados.perguntas).map(x => Object.keys(x))),
+            datasets: [{
+                label: 'Respostas',
+                data: [].concat(...Object.values(dados.perguntas).map(x => Object.values(x))),
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        }
+    });
+}
+
+atualizar();
+setInterval(atualizar, 5000);
+</script>
+</body>
+</html>
