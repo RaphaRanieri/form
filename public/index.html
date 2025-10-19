@@ -74,6 +74,12 @@
     </div>
 </main>
 
+<footer>
+    <span class="link-estatistica-secreta">
+        <a href="/estatisticas" title="Informações sobre o sistema">Status do Servidor</a>
+    </span>
+</footer>
+
 <script>
     document.getElementById('formulario').addEventListener('submit', async function(event) {
         event.preventDefault();
@@ -107,7 +113,8 @@
         }
 
         try {
-            const resposta = await fetch('/contar', {
+            // OBSERVAÇÃO: A URL '/contar' está sendo usada como exemplo de endpoint de backend.
+            const resposta = await fetch('/contar', { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
