@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Estatísticas do Formulário</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="estatistica.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <h1>📊 Estatísticas do Formulário</h1>
@@ -12,7 +12,7 @@
   <h2>Contagem de Campos Preenchidos</h2>
   <canvas id="camposChart" width="400" height="200"></canvas>
 
-  <h2>Distribuição das Respostas</h2>
+  <h2>Distribuição das Respostas por Pergunta</h2>
   <div id="perguntas-container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; margin-bottom: 20px;">
     </div>
 
@@ -23,9 +23,9 @@
   <script>
     // Mapeamento das chaves do objeto para os títulos das perguntas
     const titulosPerguntas = {
-        motivo1: 'Pergunta 1: Por que você é desatento?',
-        motivo2: 'Pergunta 2: Você se sente seguro?',
-        motivo3: 'Pergunta 3: Você já foi alvo de golpe?'
+        motivo1: 'Pergunta 1: Você se preocupa com sua segurança online?',
+        motivo2: 'Pergunta 2: Já teve problemas com segurança digital?',
+        motivo3: 'Pergunta 3: Se sim, acha que aconteceria novamente?'
     };
 
     // Cores pré-definidas para os gráficos de pizza
@@ -34,11 +34,11 @@
     ];
 
     let camposChart = null;
-    let perguntasCharts = {}; // Objeto para armazenar referências aos gráficos de perguntas
+    let perguntasCharts = {}; 
 
     async function atualizar() {
       try {
-        // Rota que o servidor deve responder com os dados JSON
+        // Busca os dados na API JSON
         const res = await fetch('/estatisticas/dados');
         if (!res.ok) {
             throw new Error(`Erro ao buscar dados: ${res.statusText}`);
@@ -50,13 +50,12 @@
 
       } catch (error) {
         console.error('Falha ao atualizar estatísticas:', error);
-        // Exibir uma mensagem de erro na página pode ser útil
-        // document.body.innerHTML = `<h1>Erro ao carregar dados. Verifique o console.</h1>`;
       }
     }
     
     // 1. Renderiza o Gráfico de Barras para Campos Preenchidos
     function renderizarGraficoCampos(dadosCampos) {
+        // Destrói o gráfico antigo para evitar vazamento de memória e conflitos
         if (camposChart) camposChart.destroy();
         
         const ctx1 = document.getElementById('camposChart').getContext('2d');
@@ -65,9 +64,9 @@
             data: {
                 labels: Object.keys(dadosCampos),
                 datasets: [{
-                    label: 'Campos preenchidos',
+                    label: 'Contagem de Preenchimentos',
                     data: Object.values(dadosCampos),
-                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
                     borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 1
                 }]
@@ -77,7 +76,6 @@
                 scales: { 
                     y: { 
                         beginAtZero: true,
-                        // Garantir que a escala Y mostre apenas números inteiros
                         ticks: { stepSize: 1 } 
                     } 
                 } 
@@ -88,22 +86,26 @@
     // 2. Renderiza Gráficos de Pizza (Doughnut) para as Perguntas
     function renderizarGraficosPerguntas(dadosPerguntas) {
         const container = document.getElementById('perguntas-container');
-        // Limpa gráficos anteriores
+        // Limpa e destrói gráficos anteriores
         container.innerHTML = '';
         Object.keys(perguntasCharts).forEach(key => perguntasCharts[key].destroy());
         perguntasCharts = {};
 
-        Object.keys(dadosPerguntas).forEach((chavePergunta, index) => {
+        Object.keys(dadosPerguntas).forEach((chavePergunta) => {
             const respostas = dadosPerguntas[chavePergunta];
             const labels = Object.keys(respostas);
             const data = Object.values(respostas);
             
+            // Pular se não houver dados (opcional, mas bom para evitar gráficos vazios)
+            const total = data.reduce((a, b) => a + b, 0);
+            if (total === 0) return;
+
             // Cria um novo container e canvas para cada gráfico
             const chartWrapper = document.createElement('div');
             chartWrapper.style.width = '300px'; 
-            chartWrapper.style.height = '300px'; 
+            chartWrapper.style.height = '350px'; // Altura ajustada para o título e legenda
             chartWrapper.style.textAlign = 'center';
-            chartWrapper.innerHTML = `<h3>${titulosPerguntas[chavePergunta] || chavePergunta}</h3><canvas id="${chavePergunta}Chart"></canvas>`;
+            chartWrapper.innerHTML = `<canvas id="${chavePergunta}Chart"></canvas>`;
             container.appendChild(chartWrapper);
 
             const ctx = document.getElementById(`${chavePergunta}Chart`).getContext('2d');
@@ -116,12 +118,12 @@
                     datasets: [{
                         data: data,
                         backgroundColor: cores.slice(0, data.length),
-                        hoverOffset: 4
+                        hoverOffset: 8
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false, // Importante para o container
+                    maintainAspectRatio: false, 
                     plugins: {
                         legend: {
                             position: 'bottom',
